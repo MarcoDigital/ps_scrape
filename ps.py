@@ -68,7 +68,7 @@ def plantsome_scrape(pagina):
 if __name__ == "__main__":
     while 1:
         # Willekeurig aantal seconden tussen x and y.
-        interval = random.randint(7, 15)
+        interval = random.randint(86400, 90000)
         try:
             if i == 1:
                 create_csv()
