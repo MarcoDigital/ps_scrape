@@ -4,13 +4,13 @@ import pandas as pd
 import time
 import random
 
-# Deze scraper werkt alleen met productpagina's van Plantsome waarin de volgende gegevens beschikbaarzijn:
+# Deze scraper werkt alleen met productpagina's van PS waarin de volgende gegevens beschikbaarzijn:
 
-# 1. Latijnse naam zoals "Trachycarpus Fortunei (Chinese Waaierpalm)".
-# 2. Plantsome naam zoals "Jackie".
+# 1. Latijnse naam
+# 2. Naam zoals "Marco".
 # 3. Een totaalprijs beschikbaar is.
 
-url = input("Wat is de Plantsome URL? ")
+url = input("Wat is de URL? ")
 filename = input("Hoe heet het product? ")
 
 # Tijd
@@ -23,12 +23,12 @@ i = 1
 def create_csv():
     """Maakt eerste bestand aan met headers"""
     df = pd.DataFrame({'1': [], "2": [], "3": [], "4": [], "5": [], "6": [], })
-    df.columns = ["Datum", "Tijd", "Plantsome", "Product", "URL", "Prijs"]
+    df.columns = ["Datum", "Tijd", "PS", "Product", "URL", "Prijs"]
     df.to_csv("./data/" + filename + ".csv", header=True,
               mode="a", encoding="utf-8", sep="\t", index=False)
 
 
-def plantsome_scrape(pagina):
+def ps_scrape(pagina):
     """Generator functie. Vult het bestand van create_csv() aan met gegevens"""
     # Tijd
     t = time.localtime()
@@ -45,13 +45,13 @@ def plantsome_scrape(pagina):
 
     prijs = float(prijs_str)  # Prijs
     producttitel = product.strip()  # Latijnse naam
-    plantsome_naam = soup.find(
-        "h2", class_="product-title__title title black mt0 mb0 f-bold").get_text()  # Plantsome naam
+    ps_naam = soup.find(
+        "h2", class_="product-title__title title black mt0 mb0 f-bold").get_text()  # PS naam
 
     # Pandas
     df = pd.DataFrame({"Datum": [datum],
                        "Tijd": [current_time],
-                       "Plantsome": [plantsome_naam],
+                       "Ps": [ps],
                        "Product": [producttitel],
                        "URL": [url],
                        "Prijs": [str(prijs)],
@@ -62,7 +62,7 @@ def plantsome_scrape(pagina):
               mode="a", encoding="utf-8", sep="\t", index=False)
 
     # Console log
-    print(f"{datum} - {current_time}: Data geschreven voor {producttitel} ({plantsome_naam}). Bestandsnaam: {filename}.csv")
+    print(f"{datum} - {current_time}: Data geschreven voor {producttitel} ({ps_naam}). Bestandsnaam: {filename}.csv")
 
 
 if __name__ == "__main__":
@@ -77,7 +77,7 @@ if __name__ == "__main__":
             print(
                 f"{datum} - {current_time}: Er kon geen CSV bestand gemaakt worden. Bestaat de \"data\" map nog?")
         try:
-            plantsome_scrape(url)
+            ps_scrape(url)
         except:
             print(
                 f"{datum} - {current_time}: Geen product gevonden. Wellicht uit voorraad of een verkeerde URL.")
